@@ -4,19 +4,19 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
-    <groupId></groupId>
-    <artifactId></artifactId>
+    <groupId>leanderk.izou</groupId>
+    <artifactId>spotifyConnect</artifactId>
     <packaging>jar</packaging>
-    <version></version>
-    <name></name>
+    <version>0.5</version>
+    <name>Spotify Connect</name>
 
     <properties>
-        <plugin.id></plugin.id>
+        <plugin.id>leanderk.izou.spotifyConnect</plugin.id>
         <plugin.class>path.to.the.ZipFileManager</plugin.class>
-        <plugin.provider></plugin.provider>
+        <plugin.provider>Leander Kurscheidt</plugin.provider>
         <plugin.dependencies />
-        <repo.name></repo.name>
-        <repo.owner></repo.owner>
+        <repo.name>IzouSpotifyConnect</repo.name>
+        <repo.owner>LeanderK</repo.owner>
         <!-- github server corresponds to entry in ~/.m2/settings.xml -->
         <github.global.server>github</github.global.server>
     </properties>
@@ -26,6 +26,11 @@
             <groupId>org.intellimate.izou</groupId>
             <artifactId>sdk</artifactId>
             <version>[0.5.0, 1.0.0)</version>
+        </dependency>
+        <dependency>
+            <groupId>com.shuffle</groupId>
+            <artifactId>scplayer</artifactId>
+            <version>0.0.1</version>
         </dependency>
     </dependencies>
 
