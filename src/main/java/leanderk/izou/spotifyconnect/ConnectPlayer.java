@@ -24,6 +24,7 @@ public class ConnectPlayer extends Player<Void> implements PlayerListener {
     private final SpotifyConnectPlayer player;
     private final AudioPlayer audioListener;
     private final Consumer<SpotifyConnectPlayer> reset;
+    private final AudioListenerGuard audioListenerGuard;
 
     /**
      * creates a new output-plugin with a new id
@@ -36,6 +37,8 @@ public class ConnectPlayer extends Player<Void> implements PlayerListener {
         super(context, ID, false, activator, true, true, true, false, true);
         this.player = player;
         audioListener = ((AudioPlayer) player.getAudioListener());
+        audioListenerGuard = new AudioListenerGuard(audioListener);
+        player.setAudioListener(audioListenerGuard);
         this.reset = reset;
         getCommandHandler().setJumpProgressController(progress -> {
             if (getCurrentProgress().getLength() <= progress.getPosition() && progress.getPosition() >= 0) {
@@ -87,8 +90,7 @@ public class ConnectPlayer extends Player<Void> implements PlayerListener {
      */
     @Override
     public void stopSound() {
-        if (player.isActive())
-            reset.accept(player);
+        audioListenerGuard.deactivate();
     }
 
     /**
@@ -99,7 +101,7 @@ public class ConnectPlayer extends Player<Void> implements PlayerListener {
      */
     @Override
     public void play(EventModel eventModel) {
-
+        audioListenerGuard.activate();
     }
 
     @Override

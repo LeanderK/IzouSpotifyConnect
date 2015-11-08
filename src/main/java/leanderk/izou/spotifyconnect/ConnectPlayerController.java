@@ -3,8 +3,17 @@ package leanderk.izou.spotifyconnect;
 import com.shuffle.scplayer.core.PlayerListener;
 import com.shuffle.scplayer.core.SpotifyConnectPlayer;
 import com.shuffle.scplayer.core.Track;
+import org.intellimate.izou.events.EventLifeCycle;
+import org.intellimate.izou.identification.Identification;
+import org.intellimate.izou.identification.IdentificationManager;
 import org.intellimate.izou.sdk.Context;
+import org.intellimate.izou.sdk.frameworks.music.events.StartMusicRequest;
+import org.intellimate.izou.sdk.frameworks.music.player.TrackInfo;
+import org.intellimate.izou.sdk.frameworks.music.player.template.Player;
 import org.intellimate.izou.sdk.frameworks.music.player.template.PlayerController;
+
+import java.util.Optional;
+import java.util.function.Consumer;
 
 /**
  * @author LeanderK
@@ -12,8 +21,10 @@ import org.intellimate.izou.sdk.frameworks.music.player.template.PlayerControlle
  */
 public class ConnectPlayerController extends PlayerController {
     public static final String ID = ConnectPlayerController.class.getCanonicalName();
+    private Player player;
 
-    public ConnectPlayerController(Context context, SpotifyConnectPlayer spotifyConnectPlayer) {
+
+    public ConnectPlayerController(Context context, SpotifyConnectPlayer spotifyConnectPlayer, Consumer<SpotifyConnectPlayer> reset) {
         super(context, ID);
         spotifyConnectPlayer.addPlayerListener(new PlayerListener() {
             @Override
@@ -42,7 +53,17 @@ public class ConnectPlayerController extends PlayerController {
 
             @Override
             public void onActive() {
-                startPlaying();
+                Optional<Identification> ownIdentification = IdentificationManager.getInstance()
+                        .getIdentification(ConnectPlayerController.this);
+                Optional<Identification> playerIdentification = IdentificationManager.getInstance()
+                        .getIdentification(player);
+                if (!ownIdentification.isPresent() || !playerIdentification.isPresent()) {
+                    error("unable to obtain identification");
+                    return;
+                }
+                StartMusicRequest.createStartMusicRequest(ownIdentification.get(), playerIdentification.get(), (TrackInfo) null)
+                        .map(event -> event.addEventLifeCycleListener(EventLifeCycle.CANCELED, cycle -> reset.accept(spotifyConnectPlayer)))
+                        .ifPresent(event -> fire(event, 5));
             }
 
             @Override
@@ -60,6 +81,12 @@ public class ConnectPlayerController extends PlayerController {
             @Override
             public void onLoggedOut() {}
         });
+    }
+
+    @Override
+    public void setPlayer(Player player) {
+        this.player = player;
+        super.setPlayer(player);
     }
 
     /**
