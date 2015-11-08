@@ -55,7 +55,7 @@ public class SAddon extends AddOn {
             player1.login(username, password);
         };
 
-        ConnectPlayerController controller = new ConnectPlayerController(getContext(), player);
+        ConnectPlayerController controller = new ConnectPlayerController(getContext(), player, reset);
         ConnectPlayer connectPlayer = new ConnectPlayer(getContext(), controller, player, reset);
         controller.setPlayer(connectPlayer);
         getContext().getActivators().addActivator(controller);
