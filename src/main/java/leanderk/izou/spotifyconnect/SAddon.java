@@ -8,6 +8,7 @@ import org.intellimate.izou.output.OutputExtensionModel;
 import org.intellimate.izou.output.OutputPluginModel;
 import org.intellimate.izou.sdk.addon.AddOn;
 import org.intellimate.izou.sdk.contentgenerator.ContentGenerator;
+import ro.fortsoft.pf4j.Extension;
 
 import java.io.File;
 import java.util.function.Consumer;
@@ -16,6 +17,7 @@ import java.util.function.Consumer;
  * @author LeanderK
  * @version 1.0
  */
+@Extension
 public class SAddon extends AddOn {
     public static final String ID = SAddon.class.getCanonicalName();
 
@@ -37,15 +39,20 @@ public class SAddon extends AddOn {
                 getContext().getPropertiesAssistant().getProperty("pathToLibSpotify"));
 
         SpotifyConnectPlayer player = new SpotifyConnectPlayerImpl(pathToAppkey, pathToLib.getAbsolutePath());
-        player.login(getContext().getPropertiesAssistant().getProperty("spotify-username"),
-                getContext().getPropertiesAssistant().getProperty("spotify-password"));
+        String username = getContext().getPropertiesAssistant().getProperty("spotify-username");
+        String password = getContext().getPropertiesAssistant().getProperty("spotify-password");
+        if (username == null || password == null) {
+            player.close();
+            return;
+        }
+
+        player.login(username, password);
         player.setPlayerName(getContext().getPropertiesAssistant().getProperty("name"));
 
         Consumer<SpotifyConnectPlayer> reset = player1 -> {
             player1.logout();
             player1.getAudioListener().onInactive();
-            player1.login(getContext().getPropertiesAssistant().getProperty("spotify-username"),
-                    getContext().getPropertiesAssistant().getProperty("spotify-password"));
+            player1.login(username, password);
         };
 
         ConnectPlayerController controller = new ConnectPlayerController(getContext(), player);

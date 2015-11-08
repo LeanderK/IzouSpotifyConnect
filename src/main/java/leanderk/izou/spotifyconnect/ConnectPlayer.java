@@ -87,7 +87,7 @@ public class ConnectPlayer extends Player<Void> implements PlayerListener {
      */
     @Override
     public void stopSound() {
-        if (player.isPlaying())
+        if (player.isActive())
             reset.accept(player);
     }
 

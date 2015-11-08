@@ -12,7 +12,7 @@
 
     <properties>
         <plugin.id>leanderk.izou.spotifyConnect</plugin.id>
-        <plugin.class>path.to.the.ZipFileManager</plugin.class>
+        <plugin.class>leanderk.izou.spotifyconnect.ZipFileManager</plugin.class>
         <plugin.provider>Leander Kurscheidt</plugin.provider>
         <plugin.dependencies />
         <repo.name>IzouSpotifyConnect</repo.name>
