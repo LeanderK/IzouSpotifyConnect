@@ -1,6 +1,8 @@
 package leanderk.izou.spotifyconnect;
 
 import com.shuffle.scplayer.core.AudioListener;
+import org.intellimate.izou.sdk.Context;
+import org.intellimate.izou.sdk.util.AddOnModule;
 
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
@@ -9,20 +11,24 @@ import java.util.concurrent.locks.ReentrantLock;
  * @author LeanderK
  * @version 1.0
  */
-public class AudioListenerGuard implements AudioListener {
+public class AudioListenerGuard extends AddOnModule implements AudioListener {
+    public static final String ID = AudioListenerGuard.class.getCanonicalName();
+
     private boolean activate = false;
     private final AudioListener audioListener;
 
-    private boolean play = false;
+    private boolean play = true;
     private Lock playLock = new ReentrantLock();
     private short volume = -1;
     private Lock volumeLock = new ReentrantLock();
 
-    public AudioListenerGuard(AudioListener audioListener) {
+    public AudioListenerGuard(Context context, AudioListener audioListener) {
+        super(context, ID);
         this.audioListener = audioListener;
     }
 
     public void activate() {
+        audioListener.onActive();
         try {
             playLock.lock();
             if (play) {
@@ -44,6 +50,8 @@ public class AudioListenerGuard implements AudioListener {
     }
 
     public void deactivate() {
+        if (!activate)
+            return;
         activate = false;
         audioListener.onInactive();
     }

@@ -36,8 +36,9 @@ public class ConnectPlayer extends Player<Void> implements PlayerListener {
     public ConnectPlayer(Context context, Identifiable activator, SpotifyConnectPlayer player, Consumer<SpotifyConnectPlayer> reset) {
         super(context, ID, false, activator, true, true, true, false, true);
         this.player = player;
+        player.addPlayerListener(this);
         audioListener = ((AudioPlayer) player.getAudioListener());
-        audioListenerGuard = new AudioListenerGuard(audioListener);
+        audioListenerGuard = new AudioListenerGuard(context, audioListener);
         player.setAudioListener(audioListenerGuard);
         this.reset = reset;
         getCommandHandler().setJumpProgressController(progress -> {

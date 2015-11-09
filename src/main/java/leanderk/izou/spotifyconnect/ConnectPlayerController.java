@@ -61,7 +61,7 @@ public class ConnectPlayerController extends PlayerController {
                     error("unable to obtain identification");
                     return;
                 }
-                StartMusicRequest.createStartMusicRequest(ownIdentification.get(), playerIdentification.get(), (TrackInfo) null)
+                StartMusicRequest.createStartMusicRequest(ownIdentification.get(), playerIdentification.get(), (TrackInfo) null, true)
                         .map(event -> event.addEventLifeCycleListener(EventLifeCycle.CANCELED, cycle -> reset.accept(spotifyConnectPlayer)))
                         .ifPresent(event -> fire(event, 5));
             }
