@@ -14,7 +14,7 @@ import java.util.concurrent.locks.ReentrantLock;
 public class AudioListenerGuard extends AddOnModule implements AudioListener {
     public static final String ID = AudioListenerGuard.class.getCanonicalName();
 
-    private boolean activate = false;
+    private boolean activ = false;
     private final AudioListener audioListener;
 
     private boolean play = true;
@@ -28,6 +28,8 @@ public class AudioListenerGuard extends AddOnModule implements AudioListener {
     }
 
     public void activate() {
+        if (activ)
+            return;
         audioListener.onActive();
         try {
             playLock.lock();
@@ -46,13 +48,13 @@ public class AudioListenerGuard extends AddOnModule implements AudioListener {
         } finally {
             volumeLock.unlock();
         }
-        activate = true;
+        activ = true;
     }
 
     public void deactivate() {
-        if (!activate)
+        if (!activ)
             return;
-        activate = false;
+        activ = false;
         audioListener.onInactive();
     }
 
@@ -61,7 +63,7 @@ public class AudioListenerGuard extends AddOnModule implements AudioListener {
 
     @Override
     public void onInactive() {
-        if (activate)
+        if (activ)
             audioListener.onInactive();
     }
 
@@ -73,7 +75,7 @@ public class AudioListenerGuard extends AddOnModule implements AudioListener {
         } finally {
             playLock.unlock();
         }
-        if (activate)
+        if (activ)
             audioListener.onPlay();
     }
 
@@ -85,25 +87,25 @@ public class AudioListenerGuard extends AddOnModule implements AudioListener {
         } finally {
             playLock.unlock();
         }
-        if (activate)
+        if (activ)
             audioListener.onPause();
     }
 
     @Override
     public void onTokenLost() {
-        if(activate)
+        if(activ)
             audioListener.onTokenLost();
     }
 
     @Override
     public void onAudioFlush() {
-        if (activate)
+        if (activ)
             audioListener.onAudioFlush();
     }
 
     @Override
     public void onAudioData(byte[] bytes) {
-        if (activate)
+        if (activ)
             audioListener.onAudioData(bytes);
     }
 
@@ -115,7 +117,7 @@ public class AudioListenerGuard extends AddOnModule implements AudioListener {
         } finally {
             volumeLock.unlock();
         }
-        if (activate)
+        if (activ)
             audioListener.onVolumeChanged(i);
     }
 

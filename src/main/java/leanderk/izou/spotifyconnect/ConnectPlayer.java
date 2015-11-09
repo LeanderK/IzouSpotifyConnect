@@ -107,29 +107,40 @@ public class ConnectPlayer extends Player<Void> implements PlayerListener {
 
     @Override
     public void onPlay() {
+        if(!isRunning())
+            return;
         if (getPlaybackState() != PlaybackState.PLAY)
             resumePlaying();
     }
 
     @Override
     public void onPause() {
+        if(!isRunning())
+            return;
         if (getPlaybackState() != PlaybackState.PAUSE)
             pausePlaying();
     }
 
     @Override
     public void onSeek(int i) {
-        updatePlayInfo(new Progress(player.getPlayingTrack().getDuration(), i));
+        if(!isRunning())
+            return;
+        if (player.getPlayingTrack() != null && player.getPlayingTrack().getDuration() != -1)
+            updatePlayInfo(new Progress(player.getPlayingTrack().getDuration(), i));
     }
 
     @Override
     public void onTrackChanged(Track track) {
+        if(!isRunning())
+            return;
         trackUpdate(track);
     }
 
     private void trackUpdate(Track track) {
         TrackInfo newTrack = getTrackInfofromTrack(track);
-        if (!getCurrentPlaylist().getCurrent().equals(newTrack)) {
+
+        if (getCurrentPlaylist() != null && getCurrentPlaylist().getCurrent() != null &&
+                !getCurrentPlaylist().getCurrent().equals(newTrack)) {
             updatePlayInfo(newTrack);
             updatePlayInfo(new Progress(track.getDuration(), 0));
         }
@@ -137,17 +148,25 @@ public class ConnectPlayer extends Player<Void> implements PlayerListener {
 
     @Override
     public void onNextTrack(Track track) {
+        if(!isRunning())
+            return;
         trackUpdate(track);
     }
 
     @Override
     public void onPreviousTrack(Track track) {
+        if(!isRunning())
+            return;
         trackUpdate(track);
     }
 
     @Override
     public void onShuffle(boolean b) {
+        if(!isRunning())
+            return;
         Playlist current = getCurrentPlaylist();
+        if (current == null)
+            return;
         HashSet<PlaybackMode> modes = new HashSet<>(current.getPlaybackModes());
         if (b) {
             modes.add(PlaybackMode.SHUFFLE);
@@ -160,7 +179,11 @@ public class ConnectPlayer extends Player<Void> implements PlayerListener {
 
     @Override
     public void onRepeat(boolean b) {
+        if(!isRunning())
+            return;
         Playlist current = getCurrentPlaylist();
+        if (current == null)
+            return;
         HashSet<PlaybackMode> modes = new HashSet<>(current.getPlaybackModes());
         if (b) {
             modes.add(PlaybackMode.REPEAT);
@@ -176,16 +199,23 @@ public class ConnectPlayer extends Player<Void> implements PlayerListener {
 
     @Override
     public void onInactive() {
+        if(!isRunning())
+            return;
+        audioListenerGuard.deactivate();
         stopMusicPlayback();
     }
 
     @Override
     public void onTokenLost() {
+        if(!isRunning())
+            return;
         stopMusicPlayback();
     }
 
     @Override
     public void onVolumeChanged(short volume) {
+        if(!isRunning())
+            return;
         float volumePercent = (float) (volume / 655.35);
         Volume.createVolume((int) (volumePercent * 100)).ifPresent(this::updatePlayInfo);
     }
