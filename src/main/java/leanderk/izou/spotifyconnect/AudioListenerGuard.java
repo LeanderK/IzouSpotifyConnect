@@ -104,9 +104,12 @@ public class AudioListenerGuard extends AddOnModule implements AudioListener {
     }
 
     @Override
-    public void onAudioData(byte[] bytes) {
-        if (activ)
-            audioListener.onAudioData(bytes);
+    public int onAudioData(byte[] bytes) {
+        if (activ) {
+            return audioListener.onAudioData(bytes);
+        } else {
+            return 0;
+        }
     }
 
     @Override
