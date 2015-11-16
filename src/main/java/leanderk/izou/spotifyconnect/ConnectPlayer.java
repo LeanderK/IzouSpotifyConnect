@@ -220,12 +220,6 @@ public class ConnectPlayer extends Player<Void> implements PlayerListener {
         Volume.createVolume((int) (volumePercent * 100)).ifPresent(this::updatePlayInfo);
     }
 
-    @Override
-    public void onLoggedIn() {}
-
-    @Override
-    public void onLoggedOut() {}
-
     private TrackInfo getTrackInfofromTrack(Track track) {
         return new TrackInfo(track.getName(), track.getArtist(), track.getAlbum(), null, null, track.getUri());
     }

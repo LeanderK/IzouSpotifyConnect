@@ -74,12 +74,6 @@ public class ConnectPlayerController extends PlayerController {
 
             @Override
             public void onVolumeChanged(short i) {}
-
-            @Override
-            public void onLoggedIn() {}
-
-            @Override
-            public void onLoggedOut() {}
         });
     }
 
