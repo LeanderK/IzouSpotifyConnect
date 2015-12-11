@@ -199,8 +199,6 @@ public class ConnectPlayer extends Player<Void> implements PlayerListener {
 
     @Override
     public void onInactive() {
-        if(!isRunning())
-            return;
         audioListenerGuard.deactivate();
         stopMusicPlayback();
     }

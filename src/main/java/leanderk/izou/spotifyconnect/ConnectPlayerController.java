@@ -11,6 +11,8 @@ import org.intellimate.izou.sdk.frameworks.music.events.StartMusicRequest;
 import org.intellimate.izou.sdk.frameworks.music.player.TrackInfo;
 import org.intellimate.izou.sdk.frameworks.music.player.template.Player;
 import org.intellimate.izou.sdk.frameworks.music.player.template.PlayerController;
+import org.intellimate.izou.sdk.frameworks.presence.consumer.PresenceEventUser;
+import org.intellimate.izou.sdk.frameworks.presence.consumer.PresenceResourceUser;
 
 import java.util.Optional;
 import java.util.function.Consumer;
@@ -19,12 +21,12 @@ import java.util.function.Consumer;
  * @author LeanderK
  * @version 1.0
  */
-public class ConnectPlayerController extends PlayerController {
+public class ConnectPlayerController extends PlayerController implements PresenceEventUser, PresenceResourceUser {
     public static final String ID = ConnectPlayerController.class.getCanonicalName();
     private Player player;
 
 
-    public ConnectPlayerController(Context context, SpotifyConnectPlayer spotifyConnectPlayer, Consumer<SpotifyConnectPlayer> reset) {
+    public ConnectPlayerController(Context context, SpotifyConnectPlayer spotifyConnectPlayer, Consumer<SpotifyConnectPlayer> reset, Consumer<SpotifyConnectPlayer> login, Consumer<SpotifyConnectPlayer> logout) {
         super(context, ID);
         spotifyConnectPlayer.addPlayerListener(new PlayerListener() {
             @Override
@@ -75,6 +77,13 @@ public class ConnectPlayerController extends PlayerController {
             @Override
             public void onVolumeChanged(short i) {}
         });
+
+        registerPresenceCallback(ev -> login.accept(spotifyConnectPlayer), false, true);
+
+        registerLeavingCallback(ev -> logout.accept(spotifyConnectPlayer), false);
+
+        if (isPresent())
+            login.accept(spotifyConnectPlayer);
     }
 
     @Override

@@ -38,7 +38,7 @@ public class SAddon extends AddOn {
         File pathToLib = new File(getContext().getFiles().getResourceLocation(),
                 getContext().getPropertiesAssistant().getProperty("pathToLibSpotify"));
 
-        SpotifyConnectPlayer player = new SpotifyConnectPlayerImpl(pathToAppkey, pathToLib.getAbsolutePath());
+        SpotifyConnectPlayer player = new SpotifyConnectPlayerImpl(pathToAppkey, pathToLib);
         String username = getContext().getPropertiesAssistant().getProperty("spotify-username");
         String password = getContext().getPropertiesAssistant().getProperty("spotify-password");
         if (username == null || password == null) {
@@ -55,7 +55,17 @@ public class SAddon extends AddOn {
             player1.login(username, password);
         };
 
-        ConnectPlayerController controller = new ConnectPlayerController(getContext(), player, reset);
+        Consumer<SpotifyConnectPlayer> login = player1 -> {
+            if (!player.isLoggedIn())
+                player1.login(username, password);
+        };
+
+        Consumer<SpotifyConnectPlayer> logout = player1 -> {
+            if (player.isLoggedIn())
+                player1.logout();
+        };
+
+        ConnectPlayerController controller = new ConnectPlayerController(getContext(), player, reset, login, logout);
         ConnectPlayer connectPlayer = new ConnectPlayer(getContext(), controller, player, reset);
         controller.setPlayer(connectPlayer);
         getContext().getActivators().addActivator(controller);
