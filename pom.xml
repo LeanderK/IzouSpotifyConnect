@@ -7,7 +7,7 @@
     <groupId>leanderk.izou</groupId>
     <artifactId>spotifyConnect</artifactId>
     <packaging>jar</packaging>
-    <version>0.5</version>
+    <version>0.6</version>
     <name>Spotify Connect</name>
 
     <properties>
@@ -236,7 +236,7 @@
             <plugin>
                 <groupId>de.jutzig</groupId>
                 <artifactId>github-release-plugin</artifactId>
-                <version>1.1.0</version>
+                <version>1.1.1</version>
                 <configuration>
                     <repositoryId>${repo.owner}/${repo.name}</repositoryId>
                     <releaseName>${project.version}</releaseName>
